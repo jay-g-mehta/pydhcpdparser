@@ -1,0 +1,18 @@
+{
+    "zone_test": {
+        "conf": "zone 17.127.10.in-addr.arpa. { primary 127.0.0.1; key DHCP_UPDATE; }",
+        "exp": "[{u'zone': {'name': u'17.127.10.in-addr.arpa. ', u'key': u'DHCP_UPDATE', u'primary': u'127.0.0.1'}}]"
+    },
+    "zone_empty_block": {
+        "conf": "zone 17.127.10.in-addr.arpa. { }",
+        "exp": "[{u'zone': {'name': u'17.127.10.in-addr.arpa. '}}]"
+    },
+    "zone_primary_only": {
+        "conf": "zone 17.127.10.in-addr.arpa. { primary 127.0.0.1; }",
+        "exp": "[{u'zone': {'name': u'17.127.10.in-addr.arpa. ', u'primary': u'127.0.0.1'}}]"
+    },
+    "zone_key_only": {
+        "conf": "zone 17.127.10.in-addr.arpa. { key DHCPUPDATE; }",
+        "exp": "[{u'zone': {'name': u'17.127.10.in-addr.arpa. ', u'key': u'DHCPUPDATE'}}]"
+    }
+}
