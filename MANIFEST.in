@@ -1,0 +1,2 @@
+include pydhcpdparser/test_files/*.json
+
