@@ -11,7 +11,7 @@ Examples
 ---------
 If you input DHCPD configuration to pydhcpdparser as
 
-.. code:: bash
+::
 
     subnet 10.198.146.0 netmask 255.255.255.192 {
         pool {
@@ -27,16 +27,16 @@ If you input DHCPD configuration to pydhcpdparser as
 **pydhcpdparser** verifies DHCPD syntax, parse and return back
 pythonic result as
 
-.. code:: bash
+::
 
-        [{'netmask': '255.255.255.192',
-         'options': {'broadcast-address': '10.198.146.63',
-                     'domain-name': '"some.domain.net"',
-                     'domain-name-servers': '10.24.199.136,10.24.199.137',
-                     'routers': '10.198.146.1'},
-         'pool': {'failover': ('peer', '"az-dhcp-failover"'),
-                  'range': ('10.198.146.4', '10.198.146.62')},
-         'subnet': '10.198.146.0'}]
+    [{'netmask': '255.255.255.192',
+     'options': {'broadcast-address': '10.198.146.63',
+                 'domain-name': '"some.domain.net"',
+                 'domain-name-servers': '10.24.199.136,10.24.199.137',
+                 'routers': '10.198.146.1'},
+     'pool': {'failover': ('peer', '"az-dhcp-failover"'),
+              'range': ('10.198.146.4', '10.198.146.62')},
+     'subnet': '10.198.146.0'}]
 
 
 Usage
@@ -93,9 +93,41 @@ Installing **pydhcpdparser**
 Supported configuration parser
 ------------------------------
 
-1. Zone statements
-2.  Subnet block declarations
-3. Option statements
+1. Subnet statements
+
+   ::
+
+     subnet subnet-number netmask netmask {
+       [ parameters ]
+       [ declarations ]
+     }
+
+2. pool declaration
+
+3. range statement
+   ::
+
+     range [ dynamic-bootp ] low-address [ high-address];
+
+4. Option statements
+   ::
+
+     option name value1[, value2...];
+
+5. Zone declaration
+
+6. Key declaration
+   ::
+
+     key name {
+         algorithm algo;
+         secret value;
+     };
+
+7. Include statement
+   ::
+
+     include "filename";
 
 
 Unit testing

@@ -1,4 +1,3 @@
-
 """
 DHCPD Configuration parser
 """
@@ -10,7 +9,7 @@ import ply.yacc
 generic_tokens = (
     'IPADDR', 'SEMICOLON', 'BRACE_OPEN', 'BRACE_CLOSE', 'COMMA',
     'EQUAL',
-    #'STRING_ENCLOSED_DOUBLE_QUOTE',
+    'STRING_ENCLOSED_DOUBLE_QUOTE',
     'STRING'
 )
 
@@ -18,6 +17,8 @@ ddns_tokens = (
     'ZONE',
     'PRIMARY',
     'KEY',
+    'ALGORITHM',
+    'SECRET'
 )
 
 subnet_tokens = (
@@ -25,7 +26,10 @@ subnet_tokens = (
     'OPTION', 'BROADCAST_ADDR', 'ROUTERS', 'DOMAIN_NAME_SERVERS', 'DOMAIN_NAME',
 )
 
-tokens = generic_tokens + ddns_tokens + subnet_tokens
+additional_tokens = ('INCLUDE', 'DYNAMIC_BOOTP_FLAG')
+
+
+tokens = generic_tokens + ddns_tokens + subnet_tokens + additional_tokens
 
 
 t_ignore = ' \t'
@@ -37,6 +41,15 @@ t_COMMA = ','
 t_ignore_COMMENT = r'[#][^\n]*'
 t_STRING = r'[^{},;]+'
 
+
+def t_DYNAMIC_BOOTP_FLAG(t):
+    r'dynamic_bootp'
+    return t
+
+
+def t_INCLUDE(t):
+    r'include'
+    return t
 
 def t_ZONE(t):
     r'zone'
@@ -50,6 +63,16 @@ def t_PRIMARY(t):
 
 def t_KEY(t):
     r'key'
+    return t
+
+
+def t_ALGORITHM(t):
+    r'algorithm'
+    return t
+
+
+def t_SECRET(t):
+    r'secret'
     return t
 
 
@@ -113,9 +136,9 @@ def t_IPADDR(t):
     return t
 
 
-def STRING_ENCLOSED_DOUBLE_QUOTE(t):
+def t_STRING_ENCLOSED_DOUBLE_QUOTE(t):
     r'"([^"]|\\")*"'
-    t.value = t.value[1:-1]
+    #t.value = t.value[1:-1]
     return t
 
 
@@ -151,6 +174,8 @@ def p_empty(p):
 def p_stmt(p):
     ''' stmt : subnet_decl
              | zone_decl
+             | key_decl
+             | include_stmt
     '''
     p[0] = p[1]
 
@@ -187,13 +212,30 @@ def p_pool_content(p):
 
 
 def p_failover_stmt(p):
-    ''' failover_stmt : FAILOVER PEER STRING SEMICOLON'''
+    ''' failover_stmt : FAILOVER PEER STRING SEMICOLON
+                      | FAILOVER PEER STRING_ENCLOSED_DOUBLE_QUOTE SEMICOLON
+    '''
     p[0] = {p[1]: (p[2], p[3])}
 
 
 def p_range_stmt(p):
-    ''' range_stmt : RANGE IPADDR IPADDR SEMICOLON'''
-    p[0] = {p[1]: (p[2], p[3])}
+    ''' range_stmt : RANGE range_addr_stmt SEMICOLON
+                   | RANGE DYNAMIC_BOOTP_FLAG range_addr_stmt SEMICOLON
+    '''
+    if len(p) > 4:
+        p[0] = {p[1]: p[3]}
+    else:
+        p[0] = {p[1]: p[2]}
+
+
+def p_range_addr_stmt(p):
+    ''' range_addr_stmt : IPADDR
+                        | IPADDR IPADDR
+    '''
+    if len(p) > 2:
+        p[0] = (p[1], p[2])
+    else:
+        p[0] = (p[1], None)
 
 
 def p_option_decls(p):
@@ -230,6 +272,7 @@ def p_op_key(p):
 
 def p_op_value(p):
     ''' op_value : STRING
+                 | STRING_ENCLOSED_DOUBLE_QUOTE
                  | IPADDR
                  | op_value COMMA op_value
     '''
@@ -269,6 +312,44 @@ def p_ddns_key_stmt(p):
     ''' ddns_key_stmt : KEY STRING SEMICOLON
     '''
     p[0] = {p[1]: p[2]}
+
+
+# Key declaration block:
+
+def p_key_decl(p):
+    ''' key_decl : KEY STRING BRACE_OPEN key_decl_block BRACE_CLOSE SEMICOLON '''
+    p[0] = {p[1]: p[2]}
+    p[0].update(p[4])
+
+
+def p_key_decl_block(p):
+    ''' key_decl_block : algorithm_stmt secret_stmt
+                       | secret_stmt algorithm_stmt
+    '''
+    p[0] = p[1]
+    p[0].update(p[2])
+
+
+def p_algorithm_stmt(p):
+    ''' algorithm_stmt : ALGORITHM STRING SEMICOLON '''
+    p[0] = {p[1]: p[2]}
+
+
+def p_secret_stmt(p):
+    ''' secret_stmt : SECRET STRING SEMICOLON'''
+    p[0] = {p[1]: p[2]}
+
+
+# Include statement:
+
+def p_include_stmt(p):
+    ''' include_stmt : INCLUDE inc_filename SEMICOLON '''
+    p[0] = {p[1]: p[2]}
+
+
+def p_inc_filename(p):
+    ''' inc_filename : STRING_ENCLOSED_DOUBLE_QUOTE '''
+    p[0] = p[1]
 
 
 def p_error(p):

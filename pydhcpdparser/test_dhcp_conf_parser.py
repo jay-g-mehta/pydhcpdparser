@@ -2,7 +2,7 @@ from unittest import TestCase
 import ddt
 from . import dhcp_conf_parser
 from test_files.dhcpd_subnets_conf_data import *
-
+from test_files.dhcpd_conf_data import *
 
 @ddt.ddt
 class TestDHCPConfParser(TestCase):
@@ -20,5 +20,21 @@ class TestDHCPConfParser(TestCase):
     )
     @ddt.unpack
     def test_subnet_stmt(self, conf, exp):
+        value = dhcp_conf_parser.parser.parse(conf)
+        self.assertEqual(exp, value)
+
+    @ddt.data((key_decl, exp_key_decl),
+              (multi_key_decl, exp_multi_key_decl),)
+    @ddt.unpack
+    def test_key_decl(self, conf, exp):
+        value = dhcp_conf_parser.parser.parse(conf)
+        self.assertEqual(exp, value)
+
+
+    @ddt.data({'conf': 'include "dhcp_other_file.conf" ;',
+               'exp': [{'include': '"dhcp_other_file.conf"'}]}
+    )
+    @ddt.unpack
+    def test_include_stmt(self, conf, exp):
         value = dhcp_conf_parser.parser.parse(conf)
         self.assertEqual(exp, value)
