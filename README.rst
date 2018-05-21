@@ -30,10 +30,10 @@ pythonic result as
 ::
 
     [{'netmask': '255.255.255.192',
-     'options': {'broadcast-address': '10.198.146.63',
-                 'domain-name': '"some.domain.net"',
-                 'domain-name-servers': '10.24.199.136,10.24.199.137',
-                 'routers': '10.198.146.1'},
+     'option': {'broadcast-address': '10.198.146.63',
+                'domain-name': '"some.domain.net"',
+                'domain-name-servers': '10.24.199.136,10.24.199.137',
+                'routers': '10.198.146.1'},
      'pool': {'failover': ('peer', '"az-dhcp-failover"'),
               'range': ('10.198.146.4', '10.198.146.62')},
      'subnet': '10.198.146.0'}]

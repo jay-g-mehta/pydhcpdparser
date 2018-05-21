@@ -21,18 +21,18 @@ subnet 10.198.133.0 netmask 255.255.255.128 {
 }
 """
 exp_multi_subnet = [{'netmask': '255.255.255.128',
-  'options': {'broadcast-address': '10.198.134.127',
-              'domain-name': '"some.domain.net"',
-              'domain-name-servers': '10.24.199.136,10.24.199.137',
-              'routers': '10.198.134.1'},
+  'option': {'broadcast-address': '10.198.134.127',
+             'domain-name': '"some.domain.net"',
+             'domain-name-servers': '10.24.199.136,10.24.199.137',
+             'routers': '10.198.134.1'},
   'pool': {'failover': ('peer', '"az-dhcp-failover"'),
            'range': ('10.198.134.4', '10.198.134.126')},
   'subnet': '10.198.134.0'},
  {'netmask': '255.255.255.128',
-  'options': {'broadcast-address': '10.198.133.127',
-              'domain-name': '"some.domain.net"',
-              'domain-name-servers': '10.24.199.136,10.24.199.137,10.24.199.138',
-              'routers': '10.198.133.1'},
+  'option': {'broadcast-address': '10.198.133.127',
+             'domain-name': '"some.domain.net"',
+             'domain-name-servers': '10.24.199.136,10.24.199.137,10.24.199.138',
+             'routers': '10.198.133.1'},
   'pool': {'failover': ('peer', '"az-dhcp-failover"'),
            'range': ('10.198.133.4', '10.198.133.126')},
   'subnet': '10.198.133.0'}]
@@ -49,10 +49,10 @@ subnet 10.198.146.0 netmask 255.255.255.192 {
 }
 """
 exp_subnet_pool_empty_block = [{'netmask': '255.255.255.192',
-  'options': {'broadcast-address': '10.198.146.63',
-              'domain-name': '"some.domain.net"',
-              'domain-name-servers': '10.24.199.136,10.24.199.137',
-              'routers': '10.198.146.1'},
+  'option': {'broadcast-address': '10.198.146.63',
+             'domain-name': '"some.domain.net"',
+             'domain-name-servers': '10.24.199.136,10.24.199.137',
+             'routers': '10.198.146.1'},
   'pool': {},
   'subnet': '10.198.146.0'}]
 
@@ -69,10 +69,10 @@ subnet 10.198.146.0 netmask 255.255.255.192 {
 }
 """
 exp_subnet_pool_failover_only = [{'netmask': '255.255.255.192',
-  'options': {'broadcast-address': '10.198.146.63',
-              'domain-name': '"some.domain.net"',
-              'domain-name-servers': '10.24.199.136,10.24.199.137',
-              'routers': '10.198.146.1'},
+  'option': {'broadcast-address': '10.198.146.63',
+             'domain-name': '"some.domain.net"',
+             'domain-name-servers': '10.24.199.136,10.24.199.137',
+             'routers': '10.198.146.1'},
   'pool': {'failover': ('peer', '"az-dhcp-failover"')},
   'subnet': '10.198.146.0'}]
 
@@ -89,10 +89,10 @@ subnet 10.198.146.0 netmask 255.255.255.192 {
 }
 """
 exp_subnet_pool_range_only = [{'netmask': '255.255.255.192',
-  'options': {'broadcast-address': '10.198.146.63',
-              'domain-name': '"some.domain.net"',
-              'domain-name-servers': '10.24.199.136,10.24.199.137',
-              'routers': '10.198.146.1'},
+  'option': {'broadcast-address': '10.198.146.63',
+             'domain-name': '"some.domain.net"',
+             'domain-name-servers': '10.24.199.136,10.24.199.137',
+             'routers': '10.198.146.1'},
   'pool': {'range': ('10.198.146.4', '10.198.146.62')},
   'subnet': '10.198.146.0'}]
 
@@ -110,10 +110,10 @@ subnet 10.198.146.0 netmask 255.255.255.192 {
 }
 """
 exp_subnet_pool_range_failover = [{'netmask': '255.255.255.192',
-  'options': {'broadcast-address': '10.198.146.63',
-              'domain-name': '"some.domain.net"',
-              'domain-name-servers': '10.24.199.136,10.24.199.137',
-              'routers': '10.198.146.1'},
+  'option': {'broadcast-address': '10.198.146.63',
+             'domain-name': '"some.domain.net"',
+             'domain-name-servers': '10.24.199.136,10.24.199.137',
+             'routers': '10.198.146.1'},
   'pool': {'failover': ('peer', '"az-dhcp-failover"'),
            'range': ('10.198.146.4', '10.198.146.62')},
   'subnet': '10.198.146.0'}]
@@ -132,10 +132,10 @@ subnet 10.198.146.0 netmask 255.255.255.192 {
 }
 """
 exp_subnet_with_options = [{'netmask': '255.255.255.192',
-  'options': {'broadcast-address': '10.198.146.63',
-              'domain-name': '"some.domain.net"',
-              'domain-name-servers': '10.24.199.136,10.24.199.137',
-              'routers': '10.198.146.1'},
+  'option': {'broadcast-address': '10.198.146.63',
+             'domain-name': '"some.domain.net"',
+             'domain-name-servers': '10.24.199.136,10.24.199.137',
+             'routers': '10.198.146.1'},
   'pool': {'failover': ('peer', '"az-dhcp-failover"'),
            'range': ('10.198.146.4', '10.198.146.62')},
   'subnet': '10.198.146.0'}]

@@ -180,6 +180,7 @@ def p_stmt(p):
     p[0] = p[1]
 
 
+# Subnet block declaration
 def p_subnet_decl(p):
     ''' subnet_decl : SUBNET IPADDR NETMASK IPADDR subnet_block '''
     p[0] = {
@@ -191,9 +192,10 @@ def p_subnet_decl(p):
 
 def p_subnet_block(p):
     ''' subnet_block : BRACE_OPEN pool_decl option_decls BRACE_CLOSE'''
-    p[0] = {'pool': p[2], 'options': p[3]}
+    p[0] = {'pool': p[2], 'option': p[3]}
 
 
+# Pool block declaration
 def p_pool_decl(p):
     ''' pool_decl : POOL BRACE_OPEN pool_content BRACE_CLOSE '''
     p[0] = p[3]
@@ -238,6 +240,8 @@ def p_range_addr_stmt(p):
         p[0] = (p[1], None)
 
 
+# option statements
+
 def p_option_decls(p):
     ''' option_decls : option_decl
                      | option_decl option_decls
@@ -278,6 +282,8 @@ def p_op_value(p):
     '''
     p[0] = "".join(p[1:])
 
+
+# Zone declarations
 
 def p_zone_decl(p):
     ''' zone_decl : ZONE zone_name BRACE_OPEN zone_block BRACE_CLOSE '''
