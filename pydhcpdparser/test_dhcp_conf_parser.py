@@ -49,3 +49,16 @@ class TestDHCPConfParser(TestCase):
     def test_allow_deny_pool_ctxt(self, conf, exp):
         value = dhcp_conf_parser.parser.parse(conf)
         self.assertEqual(exp, value)
+
+    @ddt.data((allow_decl, exp_allow_decl),
+              (allow_all_decl, exp_allow_all_decl),
+              (deny_decl, exp_deny_decl),
+              (deny_all_decl, exp_deny_all_decl),
+              (ignore_decl, exp_ignore_decl),
+              (ignore_all_decl, exp_ignore_all_decl),
+              (allow_deny_ignore_decl, exp_allow_deny_ignore_decl)
+    )
+    @ddt.unpack
+    def test_allow_deny_ignore_scope_ctxt(self, conf, exp):
+        value = dhcp_conf_parser.parser.parse(conf)
+        self.assertEqual(exp, value)

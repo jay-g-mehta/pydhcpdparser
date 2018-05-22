@@ -141,6 +141,18 @@ Supported configuration parser
      after time;
      members of "class";
 
+9. Allow, Deny and Ignore declarations at global scope
+   ::
+
+     unknown-clients
+     bootp
+     duplicates
+     client-updates
+     leasequery
+     booting
+     declines
+
+
 Unit testing
 -------------
 

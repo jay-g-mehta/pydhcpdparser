@@ -37,7 +37,10 @@ allow_deny_pool_ctxt_tokens = (
     'AFTER',
     )
 
-additional_tokens = ('INCLUDE', 'DYNAMIC_BOOTP', 'ALLOW', 'DENY')
+additional_tokens = ('INCLUDE', 'DYNAMIC_BOOTP',
+                     'BOOTING', 'BOOTP', 'DUPLICATES',
+                     'DECLINES', 'CLIENT_UPDATES', 'LEASEQUERY',
+                     'ALLOW', 'DENY', 'IGNORE')
 
 
 tokens = generic_tokens + ddns_tokens + subnet_tokens + allow_deny_pool_ctxt_tokens + additional_tokens
@@ -53,6 +56,11 @@ t_ignore_COMMENT = r'[#][^\n]*'
 t_STRING = r'[^{},;]+'
 
 
+def t_LEASEQUERY(t):
+    r'leasequery'
+    return t
+
+
 def t_UNKNOWN_CLIENTS(t):
     r'unknown-clients'
     return t
@@ -60,6 +68,11 @@ def t_UNKNOWN_CLIENTS(t):
 
 def t_KNOWN_CLIENTS(t):
     r'known-clients'
+    return t
+
+
+def t_CLIENT_UPDATES(t):
+    r'client-updates'
     return t
 
 
@@ -192,6 +205,31 @@ def t_DENY(t):
     return t
 
 
+def t_IGNORE(t):
+    r'ignore'
+    return t
+
+
+def t_BOOTING(t):
+    r'booting'
+    return t
+
+
+def t_BOOTP(t):
+    r'bootp'
+    return t
+
+
+def t_DUPLICATES(t):
+    r'duplicates'
+    return t
+
+
+def t_DECLINES(t):
+    r'declines'
+    return t
+
+
 def t_IPADDR(t):
     r'([0-2]?[0-9]?[0-9][.]){3}[0-2]?[0-9]?[0-9]'
     return t
@@ -237,6 +275,7 @@ def p_stmt(p):
              | zone_decl
              | key_decl
              | include_stmt
+             | allow_deny_ignore_in_scope_decls
     '''
     p[0] = p[1]
 
@@ -466,6 +505,55 @@ def p_include_stmt(p):
 
 def p_inc_filename(p):
     ''' inc_filename : STRING_ENCLOSED_DOUBLE_QUOTE '''
+    p[0] = p[1]
+
+
+# ALLOW, DENY, IGNORE in scope
+
+def p_allow_deny_ignore_in_scope_decls(p):
+    ''' allow_deny_ignore_in_scope_decls : allow_deny_ignore_in_scope_decl
+                                         | allow_deny_ignore_in_scope_decl allow_deny_ignore_in_scope_decls
+    '''
+    p[0] = {'allow': [], 'deny': [], 'ignore': []}
+
+    if 'allow' in p[1]:
+        p[0]['allow'].append(p[1]['allow'])
+    if 'deny' in p[1]:
+        p[0]['deny'].append(p[1]['deny'])
+    if 'ignore' in p[1]:
+        p[0]['ignore'].append(p[1]['ignore'])
+
+    if len(p) > 2:
+        p[0]['allow'] = p[0]['allow'] + p[2]['allow']
+        p[0]['deny'] = p[0]['deny'] + p[2]['deny']
+        p[0]['ignore'] = p[0]['ignore'] + p[2]['ignore']
+    # Should we delete allow or deny from p[0] if it is  equal to []
+
+
+def p_allow_deny_ignore_in_scope_decl(p):
+    ''' allow_deny_ignore_in_scope_decl : ALLOW allow_deny_ignore_params_scope_ctxt SEMICOLON
+                                        | DENY allow_deny_ignore_params_scope_ctxt SEMICOLON
+                                        | IGNORE allow_deny_ignore_params_scope_ctxt SEMICOLON
+                                        | ALLOW allow_deny_params_scope_ctxt SEMICOLON
+                                        | DENY allow_deny_params_scope_ctxt SEMICOLON
+    '''
+    p[0] = {p[1]: p[2]}
+
+
+def p_allow_deny_params_scope_ctxt(p):
+    ''' allow_deny_params_scope_ctxt : DUPLICATES
+                                     | CLIENT_UPDATES
+                                     | LEASEQUERY
+    '''
+    p[0] = p[1]
+
+
+def p_allow_deny_ignore_params_scope_ctxt(p):
+    ''' allow_deny_ignore_params_scope_ctxt : UNKNOWN_CLIENTS
+                                            | BOOTP
+                                            | BOOTING
+                                            | DECLINES
+    '''
     p[0] = p[1]
 
 
