@@ -6,6 +6,7 @@ from test_files.dhcpd_conf_data import *
 
 @ddt.ddt
 class TestDHCPConfParser(TestCase):
+
     @ddt.file_data("test_files/dhcpd_zone_conf.json")
     def test_zone_stmt(self, conf, exp):
         value = dhcp_conf_parser.parser.parse(conf)
@@ -30,11 +31,21 @@ class TestDHCPConfParser(TestCase):
         value = dhcp_conf_parser.parser.parse(conf)
         self.assertEqual(exp, value)
 
-
     @ddt.data({'conf': 'include "dhcp_other_file.conf" ;',
                'exp': [{'include': '"dhcp_other_file.conf"'}]}
     )
     @ddt.unpack
     def test_include_stmt(self, conf, exp):
+        value = dhcp_conf_parser.parser.parse(conf)
+        self.assertEqual(exp, value)
+
+    @ddt.data((pool_with_allow, exp_pool_with_allow),
+              (pool_with_multi_allow, exp_pool_with_multi_allow),
+              (pool_with_exhaustive_allow, exp_pool_with_exhaustive_allow),
+              (pool_with_exhaustive_deny, exp_pool_with_exhaustive_deny),
+              (pool_with_allow_deny, exp_pool_with_allow_deny)
+    )
+    @ddt.unpack
+    def test_allow_deny_pool_ctxt(self, conf, exp):
         value = dhcp_conf_parser.parser.parse(conf)
         self.assertEqual(exp, value)

@@ -129,6 +129,17 @@ Supported configuration parser
 
      include "filename";
 
+8. Allow and Deny declarations within pool declarations
+   ::
+
+     known-clients;
+     unknown-clients;
+     dynamic bootp clients;
+     authenticated clients;
+     unauthenticated clients;
+     all clients;
+     after time;
+     members of "class";
 
 Unit testing
 -------------

@@ -26,10 +26,21 @@ subnet_tokens = (
     'OPTION', 'BROADCAST_ADDR', 'ROUTERS', 'DOMAIN_NAME_SERVERS', 'DOMAIN_NAME',
 )
 
-additional_tokens = ('INCLUDE', 'DYNAMIC_BOOTP_FLAG')
+allow_deny_pool_ctxt_tokens = (
+    'MEMBERS_OF',
+    'KNOWN_CLIENTS',
+    'UNKNOWN_CLIENTS',
+    'DYNAMIC_BOOTP_CLIENTS',
+    'AUTHENTICATED_CLIENTS',
+    'UNAUTHENTICATED_CLIENTS',
+    'ALL_CLIENTS',
+    'AFTER',
+    )
+
+additional_tokens = ('INCLUDE', 'DYNAMIC_BOOTP', 'ALLOW', 'DENY')
 
 
-tokens = generic_tokens + ddns_tokens + subnet_tokens + additional_tokens
+tokens = generic_tokens + ddns_tokens + subnet_tokens + allow_deny_pool_ctxt_tokens + additional_tokens
 
 
 t_ignore = ' \t'
@@ -42,8 +53,43 @@ t_ignore_COMMENT = r'[#][^\n]*'
 t_STRING = r'[^{},;]+'
 
 
-def t_DYNAMIC_BOOTP_FLAG(t):
-    r'dynamic_bootp'
+def t_UNKNOWN_CLIENTS(t):
+    r'unknown-clients'
+    return t
+
+
+def t_KNOWN_CLIENTS(t):
+    r'known-clients'
+    return t
+
+
+def t_UNAUTHENTICATED_CLIENTS(t):
+    r'unauthenticated\ clients'
+    return t
+
+
+def t_AUTHENTICATED_CLIENTS(t):
+    r'authenticated\ clients'
+    return t
+
+
+def t_ALL_CLIENTS(t):
+    r'all\ clients'
+    return t
+
+
+def t_MEMBERS_OF(t):
+    r'members\ of'
+    return t
+
+
+def t_DYNAMIC_BOOTP_CLIENTS(t):
+    r'dynamic\ bootp\ clients'
+    return t
+
+
+def t_DYNAMIC_BOOTP(t):
+    r'dynamic-bootp'
     return t
 
 
@@ -131,6 +177,21 @@ def t_DOMAIN_NAME(t):
     return t
 
 
+def t_AFTER(t):
+    r'after'
+    return t
+
+
+def t_ALLOW(t):
+    r'allow'
+    return t
+
+
+def t_DENY(t):
+    r'deny'
+    return t
+
+
 def t_IPADDR(t):
     r'([0-2]?[0-9]?[0-9][.]){3}[0-2]?[0-9]?[0-9]'
     return t
@@ -182,30 +243,35 @@ def p_stmt(p):
 
 # Subnet block declaration
 def p_subnet_decl(p):
-    ''' subnet_decl : SUBNET IPADDR NETMASK IPADDR subnet_block '''
+    ''' subnet_decl : SUBNET IPADDR NETMASK IPADDR BRACE_OPEN subnet_block BRACE_CLOSE'''
     p[0] = {
         'subnet': p[2],
         'netmask': p[4],
     }
-    p[0].update(p[5])
+    p[0].update(p[6])
 
 
 def p_subnet_block(p):
-    ''' subnet_block : BRACE_OPEN pool_decl option_decls BRACE_CLOSE'''
-    p[0] = {'pool': p[2], 'option': p[3]}
+    ''' subnet_block : pool_decl
+                     | option_decls
+                     | pool_decl option_decls
+                     | option_decls pool_decl
+    '''
+    p[0] = {}
+    for i in range(1, len(p)):
+        p[0].update(p[i])
 
 
 # Pool block declaration
 def p_pool_decl(p):
     ''' pool_decl : POOL BRACE_OPEN pool_content BRACE_CLOSE '''
-    p[0] = p[3]
+    p[0] = {p[1]: p[3]}
 
 
 def p_pool_content(p):
-    ''' pool_content : failover_stmt range_stmt
-                     | range_stmt failover_stmt
-                     | failover_stmt
-                     | range_stmt
+    ''' pool_content : failover_stmt pool_content
+                     | range_stmt pool_content
+                     | pool_allow_deny_decls pool_content
                      | empty
     '''
     p[0] = p[1]
@@ -222,7 +288,7 @@ def p_failover_stmt(p):
 
 def p_range_stmt(p):
     ''' range_stmt : RANGE range_addr_stmt SEMICOLON
-                   | RANGE DYNAMIC_BOOTP_FLAG range_addr_stmt SEMICOLON
+                   | RANGE DYNAMIC_BOOTP range_addr_stmt SEMICOLON
     '''
     if len(p) > 4:
         p[0] = {p[1]: p[3]}
@@ -240,15 +306,60 @@ def p_range_addr_stmt(p):
         p[0] = (p[1], None)
 
 
+# Pool allow deny declarations
+
+def p_pool_allow_deny_decls(p):
+    ''' pool_allow_deny_decls : pool_allow_deny_decl
+                              | pool_allow_deny_decl pool_allow_deny_decls
+    '''
+    p[0] = {'allow': [], 'deny': []}
+
+    if 'allow' in p[1]:
+        p[0]['allow'].append(p[1]['allow'])
+    if 'deny' in p[1]:
+        p[0]['deny'].append(p[1]['deny'])
+
+    if len(p) > 2:
+        p[0]['allow'] = p[0]['allow'] + p[2]['allow']
+        p[0]['deny'] = p[0]['deny'] + p[2]['deny']
+
+    # Should we delete allow or deny from p[0] if it is  equal to []
+
+
+def p_pool_allow_deny_decl(p):
+    ''' pool_allow_deny_decl : ALLOW allow_deny_params_pool_ctxt SEMICOLON
+                             | DENY allow_deny_params_pool_ctxt SEMICOLON
+    '''
+    p[0] = {p[1]: p[2]}
+
+
+def p_allow_deny_params_pool_ctxt(p):
+    ''' allow_deny_params_pool_ctxt : MEMBERS_OF STRING_ENCLOSED_DOUBLE_QUOTE
+                                    | KNOWN_CLIENTS
+                                    | UNKNOWN_CLIENTS
+                                    | DYNAMIC_BOOTP_CLIENTS
+                                    | AUTHENTICATED_CLIENTS
+                                    | UNAUTHENTICATED_CLIENTS
+                                    | ALL_CLIENTS
+                                    | AFTER date_time
+    '''
+    p[0] = " ".join(p[1:])
+
+
+def p_date_time(p):
+    ''' date_time : STRING'''
+    p[0] = p[1]
+
+
 # option statements
 
 def p_option_decls(p):
     ''' option_decls : option_decl
                      | option_decl option_decls
     '''
-    p[0] = dict(p[1])
+    p[0] = {'option': p[1]}
     if len(p) > 2:
-       p[0].update(p[2])
+        p[0]['option'].update(p[2]['option'])
 
 
 def p_option_decl(p):
