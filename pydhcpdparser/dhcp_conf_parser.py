@@ -10,7 +10,8 @@ generic_tokens = (
     'IPADDR', 'SEMICOLON', 'BRACE_OPEN', 'BRACE_CLOSE', 'COMMA',
     'EQUAL',
     'STRING_ENCLOSED_DOUBLE_QUOTE',
-    'STRING'
+    'STRING',
+    #'MULTI_CHARS'
 )
 
 ddns_tokens = (
@@ -37,13 +38,86 @@ allow_deny_pool_ctxt_tokens = (
     'AFTER',
     )
 
+host_tokens = ('HOST', 'HOST_NAME')
+
 additional_tokens = ('INCLUDE', 'DYNAMIC_BOOTP',
                      'BOOTING', 'BOOTP', 'DUPLICATES',
                      'DECLINES', 'CLIENT_UPDATES', 'LEASEQUERY',
                      'ALLOW', 'DENY', 'IGNORE')
 
+global_stmt_tokens = ('ABANDON_LEASE_TIME',
+                      'ADAPTIVE_LEASE_TIME_THRESHOLD',
+                      'ALWAYS_BROADCAST',
+                      'ALWAYS_REPLY_RFC1048',
+                      'AUTHORITATIVE',
+                      'NOT_AUTHORITATIVE',
+                      'BOOT_UNKNOWN_CLIENTS',
+                      'DB_TIME_FORMAT',
+                      'LOCAL',
+                      'DEFAULT',
+                      'DDNS_HOSTNAME',
+                      'DDNS_DOMAINNAME',
+                      'DDNS_REV_DOMAINNAME',
+                      'DDNS_UPDATE_STYLE',
+                      'AD_HOC',
+                      'INTERIM',
+                      'NONE',
+                      'DDNS_UPDATES',
+                      'DEFAULT_LEASE_TIME',
+                      'DELAYED_ACK',
+                      'MAX_ACK_DELAYED',
+                      'DO_FORWARD_UPDATES',
+                      'DYNAMIC_BOOTP_LEASE_CUTOFF',
+                      'DYNAMIC_BOOTP_LEASE_LENGTH',
+                      'FILENAME',
+                      'FIXED_ADDRESS6',
+                      'FIXED_ADDRESS',
+                      'FIXED_PREFIX6',
+                      'GET_LEASE_HOSTNAMES',
+                      'HARDWARE',
+                      'ETHERNET',
+                      'TOKEN_RING',
+                      'HOST_IDENTIFIER',
+                      'INFINITE_IS_RESERVED',
+                      'LEASE_FILE_NAME',
+                      'LIMIT_ADDRS_PER_IA',
+                      'DHCPV6_LEASE_FILE_NAME',
+                      'LOCAL_PORT',
+                      'LOCAL_ADDRESS',
+                      'LOG_FACILITY',
+                      'MAX_LEASE_TIME',
+                      'MIN_LEASE_TIME',
+                      'MIN_SECS',
+                      'NEXT_SERVER',
+                      'OMAPI_PORT',
+                      'ONE_LEASE_PER_CLIENT',
+                      'PID_FILE_NAME',
+                      'DHCPV6_PID_FILE_NAME',
+                      'PING_CHECK',
+                      'PING_TIMEOUT',
+                      'PREFERRED_LIFETIME',
+                      'REMOTE_PORT',
+                      'SERVER_IDENTIFIER',
+                      'SERVER_DUID',
+                      'SERVER_NAME',
+                      'DHCPV6_SET_TEE_TIMES',
+                      'SITE_OPTION_SPACE',
+                      'STASH_AGENT_OPTIONS',
+                      'UPDATE_CONFLICT_DETECTION',
+                      'UPDATE_OPTIMIZATION',
+                      'UPDATE_STATIC_LEASE',
+                      'USE_HOST_DECL_NAMES',
+                      'USE_LEASE_ADDR_FOR_DEFAULT_ROUTE',
+                      'VENDOR_OPTION_SPACE',
+                      'ON',
+                      'OFF',
+                      'TRUE',
+                      'FALSE',
+                      )
 
-tokens = generic_tokens + ddns_tokens + subnet_tokens + allow_deny_pool_ctxt_tokens + additional_tokens
+tokens = generic_tokens + ddns_tokens + subnet_tokens \
+         + allow_deny_pool_ctxt_tokens + additional_tokens\
+         + global_stmt_tokens + host_tokens
 
 
 t_ignore = ' \t'
@@ -53,26 +127,32 @@ t_BRACE_CLOSE = r'}'
 t_SEMICOLON = ';'
 t_COMMA = ','
 t_ignore_COMMENT = r'[#][^\n]*'
+#t_MULTI_CHARS = r'[^{},;\ ]+'
 t_STRING = r'[^{},;]+'
 
 
-def t_LEASEQUERY(t):
-    r'leasequery'
+def t_USE_LEASE_ADDR_FOR_DEFAULT_ROUTE(t):
+    r'use-lease-addr-for-default-route'
     return t
 
 
-def t_UNKNOWN_CLIENTS(t):
-    r'unknown-clients'
+def t_ADAPTIVE_LEASE_TIME_THRESHOLD(t):
+    r'adaptive-lease-time-threshold'
     return t
 
 
-def t_KNOWN_CLIENTS(t):
-    r'known-clients'
+def t_DYNAMIC_BOOTP_LEASE_CUTOFF(t):
+    r'dynamic-bootp-lease-cutoff'
     return t
 
 
-def t_CLIENT_UPDATES(t):
-    r'client-updates'
+def t_DYNAMIC_BOOTP_LEASE_LENGTH(t):
+    r'dynamic-bootp-lease-length'
+    return t
+
+
+def t_UPDATE_CONFLICT_DETECTION(t):
+    r'update-conflict-detection'
     return t
 
 
@@ -86,6 +166,296 @@ def t_AUTHENTICATED_CLIENTS(t):
     return t
 
 
+def t_DHCPV6_LEASE_FILE_NAME(t):
+    r'dhcpv6-lease-file-name'
+    return t
+
+
+def t_DYNAMIC_BOOTP_CLIENTS(t):
+    r'dynamic\ bootp\ clients'
+    return t
+
+
+def t_DHCPV6_SET_TEE_TIMES(t):
+    r'dhcpv6-set-tee-times'
+    return t
+
+
+def t_ONE_LEASE_PER_CLIENT(t):
+    r'one-lease-per-client'
+    return t
+
+
+def t_ALWAYS_REPLY_RFC1048(t):
+    r'always-reply-rfc1048'
+    return t
+
+
+def t_DHCPV6_PID_FILE_NAME(t):
+    r'dhcpv6-pid-file-name'
+    return t
+
+
+def t_INFINITE_IS_RESERVED(t):
+    r'infinite-is-reserved'
+    return t
+
+
+def t_BOOT_UNKNOWN_CLIENTS(t):
+    r'boot-unknown-clients'
+    return t
+
+
+def t_STASH_AGENT_OPTIONS(t):
+    r'stash-agent-options'
+    return t
+
+
+def t_UPDATE_STATIC_LEASE(t):
+    r'update-static-leases'
+    return t
+
+
+def t_USE_HOST_DECL_NAMES(t):
+    r'use-host-decl-names'
+    return t
+
+
+def t_VENDOR_OPTION_SPACE(t):
+    r'vendor-option-space'
+    return t
+
+
+def t_UPDATE_OPTIMIZATION(t):
+    r'update-optimization'
+    return t
+
+
+def t_PREFERRED_LIFETIME(t):
+    r'preferred-lifetime'
+    return t
+
+
+def t_LIMIT_ADDRS_PER_IA(t):
+    r'limit-addrs-per-ia'
+    return t
+
+
+def t_ABANDON_LEASE_TIME(t):
+    r'abandon-lease-time'
+    return t
+
+
+def t_DDNS_REV_DOMAINNAME(t):
+    r'ddns-rev-domainname'
+    return t
+
+
+def t_GET_LEASE_HOSTNAMES(t):
+    r'get-lease-hostnames'
+    return t
+
+
+def t_DEFAULT_LEASE_TIME(t):
+    r'default-lease-time'
+    return t
+
+
+def t_DOMAIN_NAME_SERVERS(t):
+    r'domain-name-servers'
+    return t
+
+
+def t_NOT_AUTHORITATIVE(t):
+    r'not\ authoritative'
+    return t
+
+
+def t_SITE_OPTION_SPACE(t):
+    r'site-option-space'
+    return t
+
+
+def t_SERVER_IDENTIFIER(t):
+    r'server-identifier'
+    return t
+
+
+def t_ALWAYS_BROADCAST(t):
+    r'always-broadcast'
+    return t
+
+
+def t_DDNS_UPDATE_STYLE(t):
+    r'ddns-update-style'
+    return t
+
+
+def t_DO_FORWARD_UPDATES(t):
+    r'do-forward-updates'
+    return t
+
+
+def t_LEASE_FILE_NAME(t):
+    r'lease-file-name'
+    return t
+
+
+def t_DDNS_DOMAINNAME(t):
+    r'ddns-domainname'
+    return t
+
+
+def t_UNKNOWN_CLIENTS(t):
+    r'unknown-clients'
+    return t
+
+
+def t_HOST_IDENTIFIER(t):
+    r'host-identifier'
+    return t
+
+
+def t_CLIENT_UPDATES(t):
+    r'client-updates'
+    return t
+
+
+def t_FIXED_ADDRESS6(t):
+    r'fixed-address6'
+    return t
+
+
+def t_MAX_ACK_DELAYED(t):
+    r'max-ack-delay'
+    return t
+
+
+def t_MAX_LEASE_TIME(t):
+    r'max-lease-time'
+    return t
+
+
+def t_MIN_LEASE_TIME(t):
+    r'min-lease-time'
+    return t
+
+
+def t_DDNS_HOSTNAME(t):
+    r'ddns-hostname'
+    return t
+
+
+def t_PID_FILE_NAME(t):
+    r'pid-file-name'
+    return t
+
+
+def t_DB_TIME_FORMAT(t):
+    r'db-time-format'
+    return t
+
+
+def t_FIXED_ADDRESS(t):
+    r'fixed-address'
+    return t
+
+
+def t_KNOWN_CLIENTS(t):
+    r'known-clients'
+    return t
+
+
+def t_LOCAL_ADDRESS(t):
+    r'local-address'
+    return t
+
+
+def t_DDNS_UPDATES(t):
+    r'ddns-updates'
+    return t
+
+
+def t_LOG_FACILITY(t):
+    r'log-facility'
+    return t
+
+
+def t_BROADCAST_ADDR(t):
+    r'broadcast-address'
+    return t
+
+
+def t_AUTHORITATIVE(t):
+    r'authoritative'
+    return t
+
+
+def t_DYNAMIC_BOOTP(t):
+    r'dynamic-bootp'
+    return t
+
+
+def t_PING_TIMEOUT(t):
+    r'ping-timeout'
+    return t
+
+
+def t_FIXED_PREFIX6(t):
+    r'fixed-prefix6'
+    return t
+
+
+def t_REMOTE_PORT(t):
+    r'remote-port'
+    return t
+
+
+def t_DELAYED_ACK(t):
+    r'delayed-ack'
+    return t
+
+
+def t_LOCAL_PORT(t):
+    r'local-port'
+    return t
+
+
+def t_TOKEN_RING(t):
+    r'token-ring'
+    return t
+
+
+def t_SERVER_NAME(t):
+    r'server-name '
+    return t
+
+
+def t_MIN_SECS(t):
+    r'min-secs'
+    return t
+
+
+def t_SERVER_DUID(t):
+    r'server-duid'
+    return t
+
+
+def t_NEXT_SERVER(t):
+    r'next-server'
+    return t
+
+
+def t_OMAPI_PORT(t):
+    r'omapi-port'
+    return t
+
+
+def t_PING_CHECK(t):
+    r'ping-check'
+    return t
+
+
 def t_ALL_CLIENTS(t):
     r'all\ clients'
     return t
@@ -96,19 +466,35 @@ def t_MEMBERS_OF(t):
     return t
 
 
-def t_DYNAMIC_BOOTP_CLIENTS(t):
-    r'dynamic\ bootp\ clients'
+def t_DOMAIN_NAME(t):
+    r'domain-name'
     return t
 
 
-def t_DYNAMIC_BOOTP(t):
-    r'dynamic-bootp'
+def t_HOST_NAME(t):
+    r'host-name'
+    return t
+
+
+def t_FILENAME(t):
+    r'filename'
+    return t
+
+
+def t_HARDWARE(t):
+    r'hardware'
+    return t
+
+
+def t_ETHERNET(t):
+    r'ethernet'
     return t
 
 
 def t_INCLUDE(t):
     r'include'
     return t
+
 
 def t_ZONE(t):
     r'zone'
@@ -170,23 +556,8 @@ def t_OPTION(t):
     return t
 
 
-def t_BROADCAST_ADDR(t):
-    r'broadcast-address'
-    return t
-
-
 def t_ROUTERS(t):
     r'routers'
-    return t
-
-
-def t_DOMAIN_NAME_SERVERS(t):
-    r'domain-name-servers'
-    return t
-
-
-def t_DOMAIN_NAME(t):
-    r'domain-name'
     return t
 
 
@@ -227,6 +598,61 @@ def t_DUPLICATES(t):
 
 def t_DECLINES(t):
     r'declines'
+    return t
+
+
+def t_AD_HOC(t):
+    r'ad-hoc'
+    return t
+
+
+def t_INTERIM(t):
+    r'interim'
+    return t
+
+
+def t_LEASEQUERY(t):
+    r'leasequery'
+    return t
+
+
+def t_LOCAL(t):
+    r'local'
+    return t
+
+
+def t_DEFAULT(t):
+    r'default'
+    return t
+
+
+def t_HOST(t):
+    r'host'
+    return t
+
+
+def t_ON(t):
+    r'on'
+    return t
+
+
+def t_OFF(t):
+    r'off'
+    return t
+
+
+def t_TRUE(t):
+    r'true'
+    return t
+
+
+def t_FALSE(t):
+    r'false'
+    return t
+
+
+def t_NONE(t):
+    r'none'
     return t
 
 
@@ -276,11 +702,14 @@ def p_stmt(p):
              | key_decl
              | include_stmt
              | allow_deny_ignore_in_scope_decls
+             | global_stmt
+             | host_blocks
     '''
     p[0] = p[1]
 
 
 # Subnet block declaration
+
 def p_subnet_decl(p):
     ''' subnet_decl : SUBNET IPADDR NETMASK IPADDR BRACE_OPEN subnet_block BRACE_CLOSE'''
     p[0] = {
@@ -302,6 +731,7 @@ def p_subnet_block(p):
 
 
 # Pool block declaration
+
 def p_pool_decl(p):
     ''' pool_decl : POOL BRACE_OPEN pool_content BRACE_CLOSE '''
     p[0] = {p[1]: p[3]}
@@ -420,7 +850,9 @@ def p_op_key(p):
     ''' op_key : BROADCAST_ADDR
                | ROUTERS
                | DOMAIN_NAME_SERVERS
-               | DOMAIN_NAME '''
+               | DOMAIN_NAME
+               | HOST_NAME
+    '''
     p[0] = p[1]
 
 
@@ -557,8 +989,192 @@ def p_allow_deny_ignore_params_scope_ctxt(p):
     p[0] = p[1]
 
 
+# global statements
+
+def p_global_stmt(p):
+    ''' global_stmt : global_param_value SEMICOLON'''
+    p[0] = p[1]
+
+
+def p_global_param_value(p):
+    ''' global_param_value : global_param_str str_value
+                           | global_param_str IPADDR
+                           | global_param_flag global_param_flag_value
+                           | DB_TIME_FORMAT DEFAULT
+                           | DB_TIME_FORMAT LOCAL
+                           | DDNS_UPDATE_STYLE AD_HOC
+                           | DDNS_UPDATE_STYLE INTERIM
+                           | DDNS_UPDATE_STYLE NONE
+                           | global_param_no_val
+    '''
+    if len(p) > 2:
+        p[0] = {p[1]: p[2]}
+    else:
+        p[0] = {p[1]: None}
+
+
+def p_global_param_no_val(p):
+    ''' global_param_no_val : AUTHORITATIVE
+                            | NOT_AUTHORITATIVE
+    '''
+    p[0] = p[1]
+
+
+def p_global_param_str(p):
+    ''' global_param_str : ABANDON_LEASE_TIME
+                         | ADAPTIVE_LEASE_TIME_THRESHOLD
+                         | DDNS_DOMAINNAME
+                         | DDNS_REV_DOMAINNAME
+                         | DEFAULT_LEASE_TIME
+                         | DELAYED_ACK
+                         | MAX_ACK_DELAYED
+                         | DYNAMIC_BOOTP_LEASE_CUTOFF
+                         | DYNAMIC_BOOTP_LEASE_LENGTH
+                         | FILENAME
+                         | LEASE_FILE_NAME
+                         | LIMIT_ADDRS_PER_IA
+                         | DHCPV6_LEASE_FILE_NAME
+                         | LOCAL_PORT
+                         | LOCAL_ADDRESS
+                         | LOG_FACILITY
+                         | MAX_LEASE_TIME
+                         | MIN_LEASE_TIME
+                         | MIN_SECS
+                         | NEXT_SERVER
+                         | OMAPI_PORT
+                         | PID_FILE_NAME
+                         | DHCPV6_PID_FILE_NAME
+                         | PING_TIMEOUT
+                         | PREFERRED_LIFETIME
+                         | REMOTE_PORT
+                         | SERVER_IDENTIFIER
+                         | SERVER_DUID
+                         | SERVER_NAME
+                         | SITE_OPTION_SPACE
+                         | VENDOR_OPTION_SPACE
+    '''
+    p[0] = p[1]
+
+
+def p_global_param_flag(p):
+    ''' global_param_flag : ALWAYS_BROADCAST
+                          | ALWAYS_REPLY_RFC1048
+                          | BOOT_UNKNOWN_CLIENTS
+                          | DDNS_UPDATES
+                          | DO_FORWARD_UPDATES
+                          | GET_LEASE_HOSTNAMES
+                          | ONE_LEASE_PER_CLIENT
+                          | INFINITE_IS_RESERVED
+                          | PING_CHECK
+                          | DHCPV6_SET_TEE_TIMES
+                          | STASH_AGENT_OPTIONS
+                          | UPDATE_CONFLICT_DETECTION
+                          | UPDATE_OPTIMIZATION
+                          | UPDATE_STATIC_LEASE
+                          | USE_HOST_DECL_NAMES
+                          | USE_LEASE_ADDR_FOR_DEFAULT_ROUTE
+    '''
+    p[0] = p[1]
+
+
+def p_global_param_flag_value(p):
+    ''' global_param_flag_value : ON
+                                | OFF
+                                | TRUE
+                                | FALSE
+    '''
+    p[0] = p[1]
+
+
+# host statement
+def p_host_blocks(p):
+    ''' host_blocks : host_block_decl
+                    | host_block_decl host_blocks
+    '''
+    p[0] = p[1]
+    if len(p) > 2:
+        p[0]['host'].update(p[2]['host'])
+
+
+def p_host_block_decl(p):
+    ''' host_block_decl : HOST STRING BRACE_OPEN host_stmts BRACE_CLOSE'''
+    p[0] = {p[1]: {p[2]: p[4]}}
+
+
+def p_host_stmts(p):
+    ''' host_stmts : host_stmt
+                   | host_stmt host_stmts
+    '''
+    p[0] = p[1]
+    if len(p) > 2:
+        p[0].update(p[2])
+
+
+def p_host_stmt(p):
+    ''' host_stmt : host_param_value SEMICOLON
+                  | option_decls
+                  | host_identifier_option_decls
+    '''
+    p[0] = p[1]
+
+
+def p_host_identifier_option_decls(p):
+    ''' host_identifier_option_decls : HOST_IDENTIFIER option_decl
+                                     | HOST_IDENTIFIER option_decl host_identifier_option_decls
+    '''
+    p[0] = {p[1]: p[2]}
+    if len(p) > 3:
+        p[0][p[1]].update(p[3][p[1]])
+
+
+def p_host_param_value(p):
+    ''' host_param_value : ALWAYS_REPLY_RFC1048 global_param_flag_value
+                         | DDNS_HOSTNAME str_value
+                         | DDNS_DOMAINNAME str_value
+                         | FIXED_ADDRESS IPADDR
+                         | FIXED_ADDRESS6 str_value
+                         | FIXED_PREFIX6 str_value
+                         | HARDWARE ETHERNET str_value
+                         | HARDWARE TOKEN_RING str_value
+    '''
+
+    len_p = len(p)
+    if len_p == 5:
+        p[0] = {p[1]: {p[2]: {p[3]: p[4]}}}
+    elif len_p == 4:
+        p[0] = {p[1]: {p[2]: p[3]}}
+    elif len_p == 3:
+        p[0] = {p[1]: p[2]}
+    else:
+        p[0] = {p[1]: None}
+
+
+# General used string value function
+def p_str_value(p):
+    ''' str_value : STRING
+                  | STRING_ENCLOSED_DOUBLE_QUOTE
+    '''
+    p[0] = p[1]
+
+
+def p_str_value_error(p):
+    ''' str_value : error STRING
+                  | error STRING_ENCLOSED_DOUBLE_QUOTE
+    '''
+    print("Trying to handle error!", p[1])
+    if p[1].type in tokens:
+        parser.errok()
+        p[0] = p[1].value + p[2]
+        print "Error probably handled"
+    else:
+        print "Exception at handling Syntax error in input "
+        p_error(p[1])
+        raise SyntaxError
+
+
 def p_error(p):
     print("Syntax error in input!", p)
+    # parser.errok()
     # ply.yacc.errok()
 
 

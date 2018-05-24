@@ -3,6 +3,9 @@ import ddt
 from . import dhcp_conf_parser
 from test_files.dhcpd_subnets_conf_data import *
 from test_files.dhcpd_conf_data import *
+from test_files.dhcpd_global_stmt_data import *
+from test_files.dhcpd_host_stmt_data import *
+
 
 @ddt.ddt
 class TestDHCPConfParser(TestCase):
@@ -60,5 +63,23 @@ class TestDHCPConfParser(TestCase):
     )
     @ddt.unpack
     def test_allow_deny_ignore_scope_ctxt(self, conf, exp):
+        value = dhcp_conf_parser.parser.parse(conf)
+        self.assertEqual(exp, value)
+
+    @ddt.data((global_stmts, exp_global_stmts),
+              (db_time_local, exp_db_time_local),
+              (ddns_update_interim, exp_ddns_update_interim)
+    )
+    @ddt.unpack
+    def test_global_stmts(self, conf, exp):
+        value = dhcp_conf_parser.parser.parse(conf)
+        self.assertEqual(exp, value)
+
+    @ddt.data((one_host_stmt, exp_one_host_stmt),
+              #(one_host_stmt_with_host_identifier, exp_one_host_stmt_with_host_identifier),
+              (multi_host_stmts, exp_multi_host_stmts)
+    )
+    @ddt.unpack
+    def test_host_stmts(self, conf, exp):
         value = dhcp_conf_parser.parser.parse(conf)
         self.assertEqual(exp, value)

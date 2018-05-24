@@ -152,6 +152,76 @@ Supported configuration parser
      booting
      declines
 
+10. Global parameters declaration statement
+   ::
+
+     adandon-lease-time time;
+     adaptive-lease-time-threshold percentage;
+     always-broadcast flag;
+     always-reply-rfc1048 flag;
+     authoritative;
+     not authoritative;
+     boot-unknown-clients flag;
+     db-time-format [ default | local ] ;
+     ddns-domainname name;
+     ddns-rev-domainname name;
+     ddns-update-style style;
+     ddns-updates flag;
+     default-lease-time time;
+     delayed-ack count;
+     max-ack-delay microseconds;
+     do-forward-updates flag;
+     dynamic-bootp-lease-cutoff date;
+     dynamic-bootp-lease-length length;
+     filename "filename";
+     get-lease-hostnames flag;
+     infinite-is-reserved flag;
+     lease-file-name name;
+     limit-addrs-per-ia number;
+     dhcpv6-lease-file-name name;
+     local-port port;
+     local-address address;
+     log-facility facility;
+     max-lease-time time;
+     min-lease-time time;
+     min-secs seconds;
+     next-server server-name;
+     omapi-port port;
+     one-lease-per-client flag;
+     pid-file-name name;
+     dhcpv6-pid-file-name name;
+     ping-check flag;
+     ping-timeout seconds;
+     preferred-lifetime seconds;
+     remote-port port;
+     server-identifier hostname;
+     server-duid LLT [ hardware-type timestamp hardware-address ] ;
+     server-duid EN enterprise-number enterprise-identifier ;
+     server-duid LL [ hardware-type hardware-address ] ;
+     server-name name ;
+     dhcpv6-set-tee-times flag;
+     site-option-space name ;
+     stash-agent-options flag;
+     update-conflict-detection flag;
+     update-optimization flag;
+     update-static-leases flag;
+     use-host-decl-names flag;
+     use-lease-addr-for-default-route flag;
+     vendor-option-space string;
+
+
+11. Host block declaration statements
+   ::
+
+     always-reply-rfc1048 flag;
+     ddns-hostname name;
+     ddns-domainname name;
+     fixed-address address [, address ... ];
+     fixed-address6 ip6-address ;
+     fixed-prefix6 low-address / bits;
+     hardware hardware-type hardware-address;
+
+
 
 Unit testing
 -------------
