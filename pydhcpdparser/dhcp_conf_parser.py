@@ -1180,4 +1180,4 @@ def p_error(p):
 
 
 ply.lex.lex(debug=0)
-parser = ply.yacc.yacc(debug=0)
+parser = ply.yacc.yacc(outputdir="/tmp", debug=0)
