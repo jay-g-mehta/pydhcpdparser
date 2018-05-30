@@ -1,2 +1,2 @@
 include pydhcpdparser/test_files/*.json
-
+include requirements.txt
