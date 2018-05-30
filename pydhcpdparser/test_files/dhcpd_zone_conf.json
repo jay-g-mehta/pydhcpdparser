@@ -14,5 +14,9 @@
     "zone_key_only": {
         "conf": "zone 17.127.10.in-addr.arpa. { key DHCPUPDATE; }",
         "exp": "[{u'zone': {'name': u'17.127.10.in-addr.arpa. ', u'key': u'DHCPUPDATE'}}]"
+    },
+    "zone_quoted_key": {
+        "conf": "zone 17.127.10.in-addr.arpa. { key \"DHCPUPDATE\"; }",
+        "exp": "[{u'zone': {'name': u'17.127.10.in-addr.arpa. ', u'key': u'\"DHCPUPDATE\"'}}]"
     }
 }

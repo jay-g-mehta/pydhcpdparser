@@ -237,4 +237,3 @@ Unit testing
 .. code:: bash
 
     $ python -m unittest discover
-

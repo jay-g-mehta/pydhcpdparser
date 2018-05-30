@@ -898,6 +898,7 @@ def p_dns_stmt(p):
 
 def p_ddns_key_stmt(p):
     ''' ddns_key_stmt : KEY STRING SEMICOLON
+                      | KEY STRING_ENCLOSED_DOUBLE_QUOTE SEMICOLON
     '''
     p[0] = {p[1]: p[2]}
 
