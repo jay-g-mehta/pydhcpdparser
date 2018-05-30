@@ -87,7 +87,15 @@ Installing **pydhcpdparser**
 
 .. code:: bash
 
-    $ pip install pydhcpdparser -r requirements.txt -r test-requirements.txt
+    $ pip install pydhcpdparser
+
+
+Development installation **pydhcpdparser**
+-------------------------------------------
+
+.. code:: bash
+
+    $ pip install pydhcpdparser -r test-requirements.txt
 
 
 Supported configuration parser
