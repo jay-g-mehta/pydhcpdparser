@@ -58,17 +58,17 @@ Usage
         option domain-name-servers 10.24.199.136,10.24.199.137;
     }
     """
-    print pydhcpdparser.parse(conf)
+    print pydhcpdparser.parser.parse(conf)
 
 
 OR
 
 .. code:: python
 
-    from pydhcpdparser import parse
+    from pydhcpdparser import parser
 
     conf = "zone 17.127.10.in-addr.arpa. { key DHCPUPDATE; }"
-    print parse(conf)
+    print parser.parse(conf)
 
 
 OR
@@ -79,7 +79,7 @@ OR
 
     with open("/etc/dhcp/dhcpd.conf) as f:
         conf = f.read()
-        print parse(conf)
+        print parser.parse(conf)
 
 
 Installing **pydhcpdparser**
