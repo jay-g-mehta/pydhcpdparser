@@ -1,6 +1,7 @@
 """
 DHCPD Configuration parser
 """
+from __future__ import print_function
 
 import ply.lex
 import ply.yacc
@@ -673,7 +674,7 @@ def t_newline(t):
 
 
 def t_error(t):
-    print t
+    print(t)
     raise Exception("Lexical error at %r line %d" % (t.value, t.lineno))
 
 
@@ -1166,9 +1167,9 @@ def p_str_value_error(p):
     if p[1].type in tokens:
         parser.errok()
         p[0] = p[1].value + p[2]
-        print "Error probably handled"
+        print("Error probably handled")
     else:
-        print "Exception at handling Syntax error in input "
+        print("Exception at handling Syntax error in input ")
         p_error(p[1])
         raise SyntaxError
 
