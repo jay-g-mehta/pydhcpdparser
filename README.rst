@@ -161,6 +161,7 @@ Supported configuration parser
      declines
 
 10. Global parameters declaration statement
+
    ::
 
      adandon-lease-time time;
@@ -219,16 +220,16 @@ Supported configuration parser
 
 
 11. Host block declaration statements
+
    ::
 
-     always-reply-rfc1048 flag;
-     ddns-hostname name;
-     ddns-domainname name;
-     fixed-address address [, address ... ];
-     fixed-address6 ip6-address ;
-     fixed-prefix6 low-address / bits;
-     hardware hardware-type hardware-address;
-
+    always-reply-rfc1048 flag;
+    ddns-hostname name;
+    ddns-domainname name;
+    fixed-address address [, address ... ];
+    fixed-address6 ip6-address ;
+    fixed-prefix6 low-address / bits;
+    hardware hardware-type hardware-address;
 
 
 Unit testing
@@ -237,3 +238,7 @@ Unit testing
 .. code:: bash
 
     $ python -m unittest discover
+
+.. code:: bash
+
+    $ python3 -m uninttest
