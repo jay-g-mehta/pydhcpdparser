@@ -217,6 +217,7 @@ Supported configuration parser
      use-host-decl-names flag;
      use-lease-addr-for-default-route flag;
      vendor-option-space string;
+     option name value1[, value2...];
 
 
 11. Host block declaration statements
@@ -241,4 +242,11 @@ Unit testing
 
 .. code:: bash
 
-    $ python3 -m uninttest
+    $ python3 -m unittest
+
+Development external references
+-------------------------------
+
+   ::
+
+    https://kb.isc.org/docs

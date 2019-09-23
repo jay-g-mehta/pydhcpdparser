@@ -49,7 +49,10 @@ update-static-leases true;
 use-host-decl-names on;
 use-lease-addr-for-default-route true;
 vendor-option-space PXE;
+option routers 204.254.239.1;
+option domain-name-servers ns1.isc.org, ns2.isc.org;
 """
+
 exp_global_stmts = [{'abandon-lease-time': '5000'},
     {'adaptive-lease-time-threshold': '99'},
     {'always-broadcast': 'on'},
@@ -99,7 +102,8 @@ exp_global_stmts = [{'abandon-lease-time': '5000'},
     {'update-static-leases': 'true'},
     {'use-host-decl-names': 'on'},
     {'use-lease-addr-for-default-route': 'true'},
-    {'vendor-option-space': 'PXE'}]
+    {'vendor-option-space': 'PXE'},
+    {'option': {'routers': '204.254.239.1', 'domain-name-servers': 'ns1.isc.org,ns2.isc.org'}}]
 
 
 db_time_local = """

@@ -994,7 +994,9 @@ def p_allow_deny_ignore_params_scope_ctxt(p):
 # global statements
 
 def p_global_stmt(p):
-    ''' global_stmt : global_param_value SEMICOLON'''
+    ''' global_stmt : global_param_value SEMICOLON
+                    | option_decls
+    '''
     p[0] = p[1]
 
 
