@@ -1,11 +1,11 @@
 from unittest import TestCase
 import ast
 import ddt
-from . import dhcp_conf_parser
-from .test_files.dhcpd_subnets_conf_data import *
-from .test_files.dhcpd_conf_data import *
-from .test_files.dhcpd_global_stmt_data import *
-from .test_files.dhcpd_host_stmt_data import *
+import dhcp_conf_parser
+from test_files.dhcpd_subnets_conf_data import *
+from test_files.dhcpd_conf_data import *
+from test_files.dhcpd_global_stmt_data import *
+from test_files.dhcpd_host_stmt_data import *
 
 
 @ddt.ddt
@@ -26,7 +26,9 @@ class TestDHCPConfParser(TestCase):
               (subnet_pool_failover_only, exp_subnet_pool_failover_only),
               (subnet_pool_range_only, exp_subnet_pool_range_only),
               (subnet_pool_range_failover, exp_subnet_pool_range_failover),
-              (subnet_with_options, exp_subnet_with_options)
+              (subnet_with_options, exp_subnet_with_options),
+              (subnets_with_range_without_pool, exp_subnets_with_range_without_pool),
+              (subnets_with_range_options, exp_subnets_with_range_options)
     )
     @ddt.unpack
     def test_subnet_stmt(self, conf, exp):

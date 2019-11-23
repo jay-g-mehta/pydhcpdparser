@@ -254,3 +254,23 @@ exp_pool_with_allow_deny = [
                        'unauthenticated clients',
                        'after 4 2007/08/24 09:14:32']},
      'subnet': '10.198.146.0'}]
+
+subnets_with_range_without_pool = """subnet 192.168.32.0 netmask 255.255.255.0 {
+    range 192.168.32.100 192.168.32.200;
+}
+"""
+exp_subnets_with_range_without_pool = [{'subnet': '192.168.32.0',
+                                        'netmask': '255.255.255.0',
+                                        'range': ('192.168.32.100', '192.168.32.200')}]
+
+subnets_with_range_options = """subnet 192.168.32.0 netmask 255.255.255.0 {
+    option domain-name "isc.org";
+    range 192.168.32.100 192.168.32.200;
+}
+"""
+
+exp_subnets_with_range_options = [{'subnet': '192.168.32.0',
+                                   'netmask': '255.255.255.0',
+                                   'range': ('192.168.32.100', '192.168.32.200'),
+                                   'option': {'domain-name': '"isc.org"'}
+                                   }]

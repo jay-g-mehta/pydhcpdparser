@@ -722,9 +722,11 @@ def p_subnet_decl(p):
 
 def p_subnet_block(p):
     ''' subnet_block : pool_decl
+                     | range_stmt
                      | option_decls
                      | pool_decl option_decls
-                     | option_decls pool_decl
+                     | option_decls range_stmt
+
     '''
     p[0] = {}
     for i in range(1, len(p)):
