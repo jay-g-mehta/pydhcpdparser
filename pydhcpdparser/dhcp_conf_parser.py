@@ -8,11 +8,19 @@ import ply.yacc
 
 
 generic_tokens = (
-    'IPADDR', 'SEMICOLON', 'BRACE_OPEN', 'BRACE_CLOSE', 'COMMA',
+    'MACADDR',
+    'IPV4ADDR',
+    'IPV6ADDR',
+    'DOMAIN',
+    'SEMICOLON',
+    'BRACE_OPEN',
+    'BRACE_CLOSE',
+    'COMMA',
     'EQUAL',
+    'COMMENT',
+    'DATE_STRING',
     'STRING_ENCLOSED_DOUBLE_QUOTE',
     'STRING',
-    #'MULTI_CHARS'
 )
 
 ddns_tokens = (
@@ -37,7 +45,7 @@ allow_deny_pool_ctxt_tokens = (
     'UNAUTHENTICATED_CLIENTS',
     'ALL_CLIENTS',
     'AFTER',
-    )
+)
 
 host_tokens = ('HOST', 'HOST_NAME')
 
@@ -114,6 +122,23 @@ global_stmt_tokens = ('ABANDON_LEASE_TIME',
                       'OFF',
                       'TRUE',
                       'FALSE',
+                      'KERN',
+                      'USER',
+                      'MAIL',
+                      'DAEMON',
+                      'AUTH',
+                      'SYSLOG',
+                      'LPR',
+                      'NEWS',
+                      'UUCP',
+                      'CRON',
+                      'AUTHPRIV',
+                      'FTP',
+                      'NTP',
+                      'SECURITY',
+                      'CONSOLE',
+                      'SOLARIS_CRON',
+                      'LOCALN',
                       )
 
 tokens = generic_tokens + ddns_tokens + subnet_tokens \
@@ -127,9 +152,11 @@ t_BRACE_OPEN = r'{'
 t_BRACE_CLOSE = r'}'
 t_SEMICOLON = ';'
 t_COMMA = ','
-t_ignore_COMMENT = r'[#][^\n]*'
-#t_MULTI_CHARS = r'[^{},;\ ]+'
-t_STRING = r'[^{},;]+'
+
+
+def t_COMMENT(t):
+    r'\#.*'
+    pass
 
 
 def t_USE_LEASE_ADDR_FOR_DEFAULT_ROUTE(t):
@@ -617,11 +644,6 @@ def t_LEASEQUERY(t):
     return t
 
 
-def t_LOCAL(t):
-    r'local'
-    return t
-
-
 def t_DEFAULT(t):
     r'default'
     return t
@@ -656,15 +678,135 @@ def t_NONE(t):
     r'none'
     return t
 
+def t_KERN(t):
+    r'^kernl$'
+    return t
 
-def t_IPADDR(t):
+def t_USER(t):
+    r'^user$'
+    return t
+
+def t_MAIL(t):
+    r'^mail$'
+    return t
+
+def t_DAEMON(t):
+    r'^daemon$'
+    return t
+
+def t_AUTH(t):
+    r'^auth$'
+    return t
+
+def t_SYSLOG(t):
+    r'^syslog$'
+    return t
+
+def t_LPR(t):
+    r'^lpr$'
+    return t
+
+def t_NEWS(t):
+    r'^news$'
+    return t
+
+def t_UUCP(t):
+    r'^uucp$'
+    return t
+
+def t_CRON(t):
+    r'^cron$'
+    return t
+
+def t_AUTHPRIV(t):
+    r'^authpriv$'
+    return t
+
+def t_FTP(t):
+    r'^ftp$'
+    return t
+
+def t_NTP(t):
+    r'^ntp$'
+    return t
+
+def t_SECURITY(t):
+    r'^security$'
+    return t
+
+def t_CONSOLE(t):
+    r'^console$'
+    return t
+
+def t_SOLARIS_CRON(t):
+    r'solaris-cron'
+    return t
+
+def t_LOCALN(t):
+    r'local[0-7]'
+    return t
+
+
+def t_LOCAL(t):
+    r'local'
+    return t
+
+
+def t_MACADDR(t):
+    r'[0-9a-fA-F]{2}(:[0-9a-fA-F]{2}){5}'
+    return t
+
+# This was probably stolen from Stack Overflow too, but I don't remember where
+# I saw it.
+# Looks reasonable enough.
+def t_IPV4ADDR(t):
     r'([0-2]?[0-9]?[0-9][.]){3}[0-2]?[0-9]?[0-9]'
+    return t
+
+# Shamelessly stolen from:
+# https://stackoverflow.com/questions/53497/regular-expression-that-matches-valid-ipv6-addresses
+# This is also pretty much untested. Hopefully it's a good enough approximation
+def t_IPV6ADDR(t):
+    r'''(
+    ([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|
+    ([0-9a-fA-F]{1,4}:){1,7}:|
+    ([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|
+    ([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|
+    ([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|
+    ([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|
+    ([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|
+    [0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|
+    :((:[0-9a-fA-F]{1,4}){1,7}|:)|
+    fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|
+    ::(ffff(:0{1,4}){0,1}:){0,1
+    ((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}
+    (25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|
+    ([0-9a-fA-F]{1,4}:){1,4}:
+    ((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}
+    (25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])
+    )'''
+    return t
+
+
+def t_DOMAIN(t):
+    r'[A-Za-z0-9\-]{1,63}(\.[A-Za-z0-9\-]{1,63}){2,}\.?(?<!-)' # noqa
+#    r'(?=.{1,255}$)(?!-)[A-Za-z0-9\-]{1,63}(\.[A-Za-z0-9\-]{1,63})*\.?(?<!-)' # noqa
+    return t
+
+
+def t_DATE_STRING(t):
+    r'([0-9]+\s+[0-9]+/[0-9]+/[0-9]+\s+[0-9]+:[0-9]+:[0-9]+)'
     return t
 
 
 def t_STRING_ENCLOSED_DOUBLE_QUOTE(t):
     r'"([^"]|\\")*"'
     #t.value = t.value[1:-1]
+    return t
+
+
+def t_STRING(t):
+    r'[^{},;\s]+'
     return t
 
 
@@ -681,6 +823,7 @@ def t_error(t):
 def p_dhcp_conf(p):
     ''' dhcp_conf : stmt
                   | empty
+                  | comment
                   | dhcp_conf stmt
     '''
 
@@ -695,6 +838,12 @@ def p_empty(p):
     ''' empty :
     '''
     p[0] = {}
+
+
+def p_comment(p):
+    ''' comment : COMMENT
+    '''
+    p[0] = p[1]
 
 
 def p_stmt(p):
@@ -712,7 +861,7 @@ def p_stmt(p):
 # Subnet block declaration
 
 def p_subnet_decl(p):
-    ''' subnet_decl : SUBNET IPADDR NETMASK IPADDR BRACE_OPEN subnet_block BRACE_CLOSE'''
+    ''' subnet_decl : SUBNET IPV4ADDR NETMASK IPV4ADDR BRACE_OPEN subnet_block BRACE_CLOSE'''
     p[0] = {
         'subnet': p[2],
         'netmask': p[4],
@@ -769,8 +918,8 @@ def p_range_stmt(p):
 
 
 def p_range_addr_stmt(p):
-    ''' range_addr_stmt : IPADDR
-                        | IPADDR IPADDR
+    ''' range_addr_stmt : IPV4ADDR
+                        | IPV4ADDR IPV4ADDR
     '''
     if len(p) > 2:
         p[0] = (p[1], p[2])
@@ -819,7 +968,7 @@ def p_allow_deny_params_pool_ctxt(p):
 
 
 def p_date_time(p):
-    ''' date_time : STRING'''
+    ''' date_time : DATE_STRING'''
     p[0] = p[1]
 
 
@@ -862,7 +1011,9 @@ def p_op_key(p):
 def p_op_value(p):
     ''' op_value : STRING
                  | STRING_ENCLOSED_DOUBLE_QUOTE
-                 | IPADDR
+                 | IPV4ADDR
+                 | IPV6ADDR
+                 | DOMAIN
                  | op_value COMMA op_value
     '''
     p[0] = "".join(p[1:])
@@ -878,7 +1029,7 @@ def p_zone_decl(p):
 
 
 def p_zone_name(p):
-    ''' zone_name : STRING '''
+    ''' zone_name : DOMAIN '''
     p[0] = p[1]
 
 
@@ -895,7 +1046,7 @@ def p_zone_block(p):
 
 
 def p_dns_stmt(p):
-    ''' dns_stmt : PRIMARY IPADDR SEMICOLON'''
+    ''' dns_stmt : PRIMARY IPV4ADDR SEMICOLON'''
     p[0] = {p[1]: p[2]}
 
 
@@ -923,9 +1074,15 @@ def p_key_decl_block(p):
 
 
 def p_algorithm_stmt(p):
-    ''' algorithm_stmt : ALGORITHM STRING SEMICOLON '''
+    ''' algorithm_stmt : ALGORITHM algorithm_value SEMICOLON '''
     p[0] = {p[1]: p[2]}
 
+
+def p_algorithm_value(p):
+    ''' algorithm_value : STRING
+                        | DOMAIN
+    '''
+    p[0] = p[1]
 
 def p_secret_stmt(p):
     ''' secret_stmt : SECRET STRING SEMICOLON'''
@@ -1004,13 +1161,17 @@ def p_global_stmt(p):
 
 def p_global_param_value(p):
     ''' global_param_value : global_param_str str_value
-                           | global_param_str IPADDR
+                           | global_param_str IPV4ADDR
+                           | global_param_str IPV6ADDR
+                           | global_param_str DOMAIN
+                           | global_param_str DATE_STRING
                            | global_param_flag global_param_flag_value
                            | DB_TIME_FORMAT DEFAULT
                            | DB_TIME_FORMAT LOCAL
                            | DDNS_UPDATE_STYLE AD_HOC
                            | DDNS_UPDATE_STYLE INTERIM
                            | DDNS_UPDATE_STYLE NONE
+                           | LOG_FACILITY log_facility_value
                            | global_param_no_val
     '''
     if len(p) > 2:
@@ -1042,7 +1203,6 @@ def p_global_param_str(p):
                          | DHCPV6_LEASE_FILE_NAME
                          | LOCAL_PORT
                          | LOCAL_ADDRESS
-                         | LOG_FACILITY
                          | MAX_LEASE_TIME
                          | MIN_LEASE_TIME
                          | MIN_SECS
@@ -1102,8 +1262,15 @@ def p_host_blocks(p):
         p[0]['host'].update(p[2]['host'])
 
 
+# XXX: Not a big fan of having both 'string' and 'domain' here, but
+# DOMAIN matches at least 2 domain labels (eg. aaa.tld) where the host
+# name can be a single label for host declarations.
+# STRING covers cases where the DOMAIN doesn't match, but probably would
+# better to match a HOSTNAME label and a DOMAIN label
 def p_host_block_decl(p):
-    ''' host_block_decl : HOST STRING BRACE_OPEN host_stmts BRACE_CLOSE'''
+    ''' host_block_decl : HOST STRING BRACE_OPEN host_stmts BRACE_CLOSE
+                        | HOST DOMAIN BRACE_OPEN host_stmts BRACE_CLOSE
+    '''
     p[0] = {p[1]: {p[2]: p[4]}}
 
 
@@ -1137,11 +1304,15 @@ def p_host_param_value(p):
     ''' host_param_value : ALWAYS_REPLY_RFC1048 global_param_flag_value
                          | DDNS_HOSTNAME str_value
                          | DDNS_DOMAINNAME str_value
-                         | FIXED_ADDRESS IPADDR
+                         | FILENAME str_value
+                         | FIXED_ADDRESS ipv4_address_list
+                         | FIXED_ADDRESS ipv6_address_list
                          | FIXED_ADDRESS6 str_value
                          | FIXED_PREFIX6 str_value
-                         | HARDWARE ETHERNET str_value
+                         | HARDWARE ETHERNET MACADDR
                          | HARDWARE TOKEN_RING str_value
+                         | NEXT_SERVER IPV4ADDR
+                         | NEXT_SERVER DOMAIN
     '''
 
     len_p = len(p)
@@ -1153,6 +1324,50 @@ def p_host_param_value(p):
         p[0] = {p[1]: p[2]}
     else:
         p[0] = {p[1]: None}
+
+
+def p_ipv4_address_list(p):
+    ''' ipv4_address_list : DOMAIN
+                          | IPV4ADDR
+                          | ipv4_address_list COMMA ipv4_address_list
+    '''
+    if len(p) > 3:
+        p[0] = p[1] + p[3]
+    else:
+        p[0] = [p[1]]
+
+
+def p_ipv6_address_list(p):
+    ''' ipv6_address_list : DOMAIN
+                     | IPV6ADDR
+                     | ipv6_address_list COMMA ipv6_address_list
+    '''
+
+    if len(p) > 3:
+        p[0] = p[1] + p[3]
+    else:
+        p[0] = [p[1]]
+
+def p_log_facility_value(p):
+    ''' log_facility_value : KERN
+                           | USER
+                           | MAIL
+                           | DAEMON
+                           | AUTH
+                           | SYSLOG
+                           | LPR
+                           | NEWS
+                           | UUCP
+                           | CRON
+                           | AUTHPRIV
+                           | FTP
+                           | NTP
+                           | SECURITY
+                           | CONSOLE
+                           | SOLARIS_CRON
+                           | LOCALN
+    '''
+    p[0] = p[1]
 
 
 # General used string value function

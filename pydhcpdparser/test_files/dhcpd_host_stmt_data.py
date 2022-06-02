@@ -9,10 +9,10 @@ host jbox {
 }
 """
 exp_one_host_stmt = [
-    {'host': {'jbox ': {
+    {'host': {'jbox': {
                          'ddns-domainname': '"home"',
                          'ddns-hostname': '"jbox"',
-                         'fixed-address': '192.168.0.5',
+                         'fixed-address': ['192.168.0.5'],
                          'hardware': {'ethernet': '01:d0:06:b8:68:34'},
                          'option': {'domain-name': '"home"',
                                     'host-name': '"jbox"'}
@@ -57,15 +57,15 @@ host pbox {
 """
 exp_multi_host_stmts = [
     {'host':
-         {'jbox ': {'ddns-domainname': '"home"',
+         {'jbox': {'ddns-domainname': '"home"',
                     'ddns-hostname': '"jbox"',
-                    'fixed-address': '192.168.0.5',
+                    'fixed-address': ['192.168.0.5'],
                     'hardware': {'ethernet': '01:d0:06:b8:68:34'},
                     'option': {'domain-name': '"home"',
                                'host-name': '"jbox"'}},
-          'pbox ': {'ddns-domainname': '"home"',
+          'pbox': {'ddns-domainname': '"home"',
                     'ddns-hostname': '"pbox"',
-                    'fixed-address': '192.168.0.25',
+                    'fixed-address': ['192.168.0.25'],
                     'hardware': {'ethernet': '01:d0:07:b9:67:44'},
                     'option': {'domain-name': '"home"',
                                'host-name': '"pbox"'}}
