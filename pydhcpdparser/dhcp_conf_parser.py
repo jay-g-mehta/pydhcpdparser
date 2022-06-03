@@ -535,7 +535,7 @@ def t_PRIMARY(t):
 
 
 def t_KEY(t):
-    r'key'
+    r'^key$'
     return t
 
 
@@ -660,7 +660,7 @@ def t_ON(t):
 
 
 def t_OFF(t):
-    r'off'
+    r'^off$'
     return t
 
 
@@ -1307,6 +1307,7 @@ def p_host_param_value(p):
                          | FILENAME str_value
                          | FIXED_ADDRESS ipv4_address_list
                          | FIXED_ADDRESS ipv6_address_list
+                         | FIXED_ADDRESS str_list
                          | FIXED_ADDRESS6 str_value
                          | FIXED_PREFIX6 str_value
                          | HARDWARE ETHERNET MACADDR
@@ -1343,6 +1344,15 @@ def p_ipv6_address_list(p):
                      | ipv6_address_list COMMA ipv6_address_list
     '''
 
+    if len(p) > 3:
+        p[0] = p[1] + p[3]
+    else:
+        p[0] = [p[1]]
+
+def p_str_list(p):
+    ''' str_list : STRING
+                 | str_list COMMA str_list
+    '''
     if len(p) > 3:
         p[0] = p[1] + p[3]
     else:
