@@ -90,4 +90,5 @@ class TestDHCPConfParser(TestCase):
     @ddt.unpack
     def test_host_stmts(self, conf, exp):
         value = dhcp_conf_parser.parser.parse(conf)
+        self.maxDiff = None
         self.assertEqual(exp, value)
